@@ -1,4 +1,5 @@
 # School project
+Basic node.js app that uses express for routing, mongodb, mongoose for validation and handlebars for templates.
 
 ### The project structure
 
