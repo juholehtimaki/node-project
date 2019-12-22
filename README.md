@@ -1,11 +1,11 @@
 # School project
 ### Features
--Node.js for backend
--Express for routing
--MongoDB
--Mongoose for validation
--Handlebars for templates
--Mocha for unit tests
+- Node.js for backend
+- Express for routing
+- MongoDB
+- Mongoose for validation
+- Handlebars for templates
+- Mocha for unit tests
 
 ### The project structure
 
