@@ -1,0 +1,31 @@
+<script src="p5.js"></script>
+<script src="p5.play.js"></script>
+<script src="p5.sound.js"></script>
+<script src="gameScript.js"></script>
+
+<div class="container">
+    <div id="exercise">
+    </div>
+    <form class="submit-form" method="POST" id="answer-form">
+        <input type="hidden" name="answers" id="answers" value="">
+        <button type="button" id="grade"></button>
+    </form>
+</div>
+
+
+<style>
+    canvas {
+        padding: 0;
+        margin: auto;
+        display: block;
+        width: 1000px;
+    }
+
+    button {
+        display: none;
+    }
+</style>
+
+<script>
+    let questionnaire = {{{ questionnaireString }}};
+</script>

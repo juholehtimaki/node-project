@@ -1,0 +1,80 @@
+<div id="exercise" class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 m-auto">
+            <h1 class="card-body" id="header1">Add a new questionnaire <a href="/questionnaires/new"><i
+                        class="fas fa-plus"></i></a>
+            </h1>
+            {{#each this.questionnaireList}}
+            <div class="card card-body">
+                <h1 class="questionnaire">{{title}}<a href="/questionnaires/{{this._id}}"><i class="fas fa-edit"
+                            id="edit-button"></i></a>
+                </h1>
+                <div class="questions-container">
+                    {{#each questions}}
+                    <p>{{this.title}}</p>
+                    <ul>
+                        {{#each options}}<li>{{#if this.correctness}}<i class="fas fa-check"></i>{{else}}<i
+                                class="fas fa-times"></i>{{/if}}{{this.option}}</li>
+                        {{/each}}
+                    </ul>
+                    {{/each}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.questionnaire').each(function (index) {
+            $(this).click(function (eventdata) {
+                $(this).parent().find('.questions-container').slideToggle(500);
+            })
+        });
+    });
+</script>
+
+<style>
+    #header {
+        text-align: middle;
+    }
+
+    #edit-button {
+        float: right;
+        margin-right: 15px;
+    }
+
+    .card {
+        margin: 10px;
+    }
+
+    i {
+        margin-right: 5px;
+        width: 16px !important;
+        height: 16px !important;
+        background-size: 16px !important;
+    }
+
+    p {
+        font-weight: bold;
+        margin-bottom: 0px;
+    }
+
+    ul {
+        list-style: none;
+        padding-left: 20px;
+    }
+
+    li {
+        margin: 0px;
+    }
+
+    .questions-container {
+        display: none;
+    }
+
+    .questionnaire:hover {
+        cursor: pointer;
+    }
+</style>

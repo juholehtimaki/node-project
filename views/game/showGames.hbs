@@ -1,0 +1,40 @@
+<div id="exercise" class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 m-auto">
+            <h1 class="card-body" id="header1">Choose a game to play</h1>
+            {{#each this.questionnaireList}}
+            <div class="card card-body">
+                <h1 class="questionnaire">{{title}}<a href="/games/{{this._id}}"><i class="fas fa-play"></i></i></a>
+                </h1>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<style>
+    #header {
+        text-align: middle;
+    }
+
+    #edit-button {
+        float: right;
+        margin-right: 15px;
+    }
+
+    .card {
+        margin: 10px;
+    }
+
+    i {
+        margin-left: 10px;
+        width: 16px !important;
+        height: 16px !important;
+        background-size: 16px !important;
+    }
+
+    p {
+        font-weight: bold;
+        margin-bottom: 0px;
+    }
+</style>

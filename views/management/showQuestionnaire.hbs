@@ -1,0 +1,333 @@
+<div class="page-container">
+    <input type="hidden" id="questionnaire-id" value="{{this._id}}">
+    <div class="col-md-6 m-auto">
+        <input type="text" class="form-control q-title-big" id="questionnaire-title" placeholder="Questionnaire title"
+            value="{{this.title}}"></input>
+        <label class="sub-title">Submissions:</label>
+        <form class="form-inline"><input type="number" class="form-control submissions" id="submissions" placeholder="2"
+                value="{{this.submissions}}"></input></form>
+        {{#each questions}}
+        <div class="card card-body">
+            <div class="form-group">
+                <label class="sub-title">Question title:</label>
+                <input type="text" class="form-control q-title" placeholder="Question title"
+                    value="{{this.title}}"></input>
+                <label class="sub-title">Max points:</label>
+                <input type="number" class="form-control max-points" placeholder="1" value="{{this.maxPoints}}"></input>
+            </div>
+            <label class="sub-title">Options:</label>
+            <div class="options-container">
+                {{#each options}}
+                <form class="form-inline">
+                    <div class="checkbox-container">
+                        {{#if this.correctness}}
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <i class="fas fa-check"></i>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" value="">
+                        <i class="fas fa-times"></i>
+                        {{/if}}
+                    </div>
+                    <input type="text" class="form-control answer" placeholder="Option" value="{{this.option}}"></input>
+                    <input type="text" class="form-control hint" placeholder="Hint" value="{{this.hint}}"></input>
+                    <i class="fas fa-trash-alt"></i>
+                </form>
+                {{/each}}
+            </div>
+            <button type="button" class="btn btn-success add-option">Add option</button>
+            <button type="button" class="btn btn-danger delete-button">Delete question</button>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+</div>
+<div class="button-container">
+    <a href="javascript:addNewQuestion()"><button type="button" class="btn btn-success" id="add-question">Add
+            new
+            question</button></a>
+    <div>
+        <form class="form-inline back-save">
+            <a href="/questionnaires/"><button type="button" class="btn btn-secondary">Back</button></a>
+            <a href="javascript:sendJSON()"><button type="button" class="btn btn-primary">Save</button></a>
+        </form>
+    </div>
+    {{#if this._id}}
+    <a href="javascript:deleteQuestionnaire()"><button type="button" class="btn btn-danger" id="add-question">Delete
+            Questionnaire</button></a>
+    {{/if}}
+</div>
+
+<style>
+    h1 {
+        text-align: center;
+    }
+
+    .add-option {
+        max-width: 30%;
+    }
+
+    .fa-trash-alt {
+        margin-left: 10px;
+    }
+
+    .fa-trash-alt:hover {
+        cursor: pointer;
+    }
+
+    .button-container {
+        text-align: center;
+    }
+
+    .back-save {
+        display: block;
+    }
+
+    .q-title-big {
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .sub-title {
+        font-weight: bold;
+    }
+
+    .option-line {
+        vertical-align: middle;
+    }
+
+    .checkbox-container {
+        min-width: 20px;
+        max-width: 20px;
+        min-height: 20px;
+        max-height: 20px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .answer {
+        margin-left: 3px;
+    }
+
+    .hint {
+        margin-left: 3px;
+    }
+
+    .form-check-input {
+        display: none;
+    }
+
+    .card {
+        margin: 10px;
+    }
+
+    .btn {
+        margin: 10px;
+    }
+</style>
+
+<script>
+    $(document).ready(setCallbacks);
+
+    function setCallbacks() {
+        $('.fa-times').add('.fa-check').each(addCheckboxCallback);
+        $('.delete-button').each(addDeleteCallback);
+        $('.add-option').each(addOptionCallback);
+        $('.fa-trash-alt').each(addDeleteCallbackOption);
+    }
+
+    function addCheckboxCallback(index) {
+        $(this).off('click');
+        $(this).click(function (eventData) {
+            if ($(this).parent().find('.form-check-input').prop('checked')) {
+                $(this).parent().find('.form-check-input').prop('checked', false);
+                $(this).removeClass('fa-check');
+                $(this).addClass('fa-times');
+            } else {
+                $(this).parent().find('.form-check-input').prop('checked', true);
+                $(this).removeClass('fa-times');
+                $(this).addClass('fa-check');
+            }
+        });
+    }
+
+    function addOptionCallback(index) {
+        $(this).off('click');
+        $(this).click(function (eventData) {
+            let option = $(this).parent().find('.options-container').append(`<form class="form-inline">
+                    <div class="checkbox-container">
+                        {{#if this.correctness}}
+                        <input class="form-check-input" type="checkbox" value="" checked>
+                        <i class="fas fa-check"></i>
+                        {{else}}
+                        <input class="form-check-input" type="checkbox" value="">
+                        <i class="fas fa-times"></i>
+                        {{/if}}
+                    </div>
+                    <input type="text" class="form-control answer" placeholder="Option" value="{{this.option}}"></input>
+                    <input type="text" class="form-control hint" placeholder="Hint" value="{{this.hint}}"></input>
+                    <i class="fas fa-trash-alt"></i>
+                </form>`);
+            setCallbacks();
+        });
+    }
+
+    function addDeleteCallback(index) {
+        $(this).off('click');
+        $(this).click(function (eventData) {
+            $(this).parent().remove();
+        });
+    }
+
+    function addDeleteCallbackOption(index) {
+        $(this).off('click');
+        $(this).click(function (eventData) {
+            $(this).parent().remove();
+        });
+    }
+
+    function deleteQuestionnaire() {
+        let result = confirm('Are you sure you want to delete the questionnaire?');
+        if (result) {
+            let url = "../questionnaires/delete/" + $('#questionnaire-id').val();
+            const response = fetch(url, {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrer: 'no-referrer', // no-referrer, *client
+                body: ''
+            })
+                .then(function (response) {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                    else {
+                        alert('Failed' + response.status);
+                    }
+                })
+                .catch(function (error) {
+                    alert('Failed to delete ' + error);
+                });
+        }
+    }
+
+    function createJSON() {
+        let _id = $('#questionnaire-id').val();
+        let title = $('#questionnaire-title').val();
+        let submissions = $('#submissions').val();
+        let questions = [];
+        $('.card').each(function (index) {
+            let iterQuestion = {};
+            iterQuestion.title = $(this).find('.q-title').val();
+            iterQuestion.maxPoints = $(this).find('.max-points').val();
+            iterQuestion.options = [];
+            $(this).find('.form-inline').each(function (index) {
+                let iterOption = {};
+                iterOption.correctness = $(this).find('.form-check-input').prop('checked');
+                iterOption.option = $(this).find('.answer').val();
+                iterOption.hint = $(this).find('.hint').val();
+                iterQuestion.options.push(iterOption);
+            });
+            questions.push(iterQuestion);
+        });
+        if (!_id || _id == '') {
+            return { title, submissions, questions };
+        }
+        return { _id, title, submissions, questions };
+    }
+
+    function sendJSON() {
+        let JSONdata = createJSON();
+        xhr = new XMLHttpRequest();
+        let url = "";
+        if (!JSONdata._id || JSONdata._id == '') {
+            url = "../questionnaires/new";
+        }
+        else {
+            url = "../questionnaires/edit/" + JSONdata._id;
+        }
+        const response = fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrer: 'no-referrer', // no-referrer, *client
+            body: JSON.stringify(JSONdata)
+        })
+            .then(function (response) {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+                else {
+                    response.text()
+                        .then((text) => flash(text, $('.page-container')));
+                }
+            })
+            .catch(function (error) {
+                alert('Failed to save ' + error);
+            });
+    }
+
+    function addNewQuestion() {
+        let question = $(".page-container").append(`<div class="col-md-6 m-auto">
+        <div class="card card-body">
+            <div class="form-group">
+                <label class="sub-title">Question title:</label>
+                <input type="text" class="form-control q-title" placeholder="Question title"></input>
+                <label class="sub-title">Max points:</label>
+                <input type="number" class="form-control max-points" placeholder="1"></input>
+            </div>
+            <label class="sub-title">Options:</label>
+            <div class="options-container">
+            <form class="form-inline">
+                <div class="checkbox-container">
+                    <input class="form-check-input" type="checkbox" value="">
+                    <i class="fas fa-times"></i>
+                </div>
+                <input type="text" class="form-control answer" placeholder="Option"></input>
+                <input type="text" class="form-control hint" placeholder="Hint"></input>
+                <i class="fas fa-trash-alt"></i>
+            </form>
+            <form class="form-inline">
+                <div class="checkbox-container">
+                    <input class="form-check-input" type="checkbox" value="">
+                    <i class="fas fa-times"></i>
+                </div>
+                <input type="text" class="form-control answer" placeholder="Option"></input>
+                <input type="text" class="form-control hint" placeholder="Hint"></input>
+                <i class="fas fa-trash-alt"></i>
+            </form>
+            </div>
+            <button type=" button" class="btn btn-success add-option">Add option</button>
+            <button type="button" class="btn btn-danger delete-button">Delete</button>
+        </div>
+    </div>
+    `);
+        /*
+        question.find('.fa-times').each(addCheckboxCallback);
+        question.find('.fa-check').each(addCheckboxCallback);
+        question.find('.delete-button').each(addDeleteCallback);
+        question.find('.fa-trash-alt').each(addDeleteCallbackOption);
+        question.find('.add-option').each(addOptionCallback);
+        */
+        setCallbacks();
+    }
+
+    function flash(HTML, parent) {
+        let message = $(HTML).appendTo(parent);
+        setTimeout(() => {
+            message.fadeOut(1500, () => {
+                message.remove();
+            });
+        }, 15000)
+    }
+</script>
